@@ -96,6 +96,89 @@
 
         <v-divider />
 
+        <!-- <v-list shaped class="vList tw-overflow-y-auto scrollBars tw-pb-10">
+          <template v-for="(item, i) in menuItems">
+            <v-list-group v-if="!item.items" :key="i" class="my-1">
+              <v-list-item
+                link
+                nuxt
+                active-class="primary !tw-text-white"
+                :to="item.page"
+              >
+                <template #prepend>
+                  <v-icon
+                    :style="item.reverse ? 'transform: scaleX(-1)' : null"
+                  >
+                    {{ item.icon }}
+                  </v-icon>
+                </template>
+                <v-tooltip
+                  v-if="item.text.length > 18"
+                  location="bottom"
+                  :text="item.text"
+                >
+                  <template #activator="{ attrs }">
+                    <v-list-item-title v-bind="attrs">
+                      {{ item.text }}
+                    </v-list-item-title>
+                  </template>
+                </v-tooltip>
+                <v-list-item-title v-else>
+                  {{ item.text }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-group>
+            <v-list-group
+              v-if="item.items?.length > 0"
+              :key="i"
+              :value="checkUrl(item.categoryUrl)"
+              :prepend-icon="item.icon"
+              :style="$vuetify.theme.dark ? 'color: #fff !important;' : null"
+            >
+              <template #activator>
+                <v-list-item-title class="!-tw-mr-3.5">
+                  {{ item.text }}
+                </v-list-item-title>
+              </template>
+              <v-list-item
+                v-for="(submenu, j) in item.items"
+                :key="j"
+                link
+                nuxt
+                class="tw-mr-8"
+                active-class="primary !tw-text-white"
+                :to="submenu.page"
+              >
+                <template #prepend>
+                  <v-icon
+                    :style="submenu.reverse ? 'transform: scaleX(-1)' : null"
+                  >
+                    {{ submenu.icon }}
+                  </v-icon>
+                </template>
+                <v-tooltip
+                  v-if="submenu.text.length > 16"
+                  location="bottom"
+                  :text="submenu.text"
+                >
+                  <template #activator="{ attrs }">
+                    <v-list-item-title
+                      v-bind="attrs"
+                      class="!tw-text-sm !-tw-mr-3.5"
+                    >
+                      {{ submenu.text }}
+                    </v-list-item-title>
+                  </template>
+                  <span class="!tw-text-sm">{{ submenu.text }}</span>
+                </v-tooltip>
+                <v-list-item-title v-else class="!tw-text-sm !-tw-mr-3.5">
+                  {{ submenu.text }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-group>
+          </template>
+        </v-list> -->
+
         <v-list v-model:opened="open">
           <v-list-item
             prepend-icon="mdi-view-dashboard-outline"
@@ -139,7 +222,7 @@
         :class="[
           route.path !== '/' ? 'pb-8' : null,
           $vuetify.theme.dark ? 'darkMainBg' : 'tw-bg-gray-100',
-          $vuetify.display.mdAndDown && '!tw-mt-14',
+          $vuetify.display.mdAndDown && '!tw-mt-8',
         ]"
       >
         <v-container

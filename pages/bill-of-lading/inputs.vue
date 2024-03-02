@@ -2,11 +2,9 @@
   <div>
     <template v-if="!newEdit">
       <v-card elevation="5">
-        <v-card-item color="primary">
-          <v-card-title class="pa-3" color="primary">
-            <div>فیلترها</div>
-          </v-card-title>
-        </v-card-item>
+        <v-card-title class="tw-bg-indigo-600 pa-3 tw-text-white">
+          فیلترها
+        </v-card-title>
         <v-card-text>
           <v-form ref="form" :disabled="loading === 'get'">
             <v-row class="mt-5">
@@ -72,11 +70,9 @@
               </v-col>
               <v-col cols="3">
                 <v-card elevation="0">
-                  <v-card-subtitle class="mt-n9">
-                    وزن خالص پالایشگاه
-                  </v-card-subtitle>
-                  <v-card-text class="mt-n8">
-                    <v-row dense class="tw-pt-2.5">
+                  <v-card-subtitle> وزن خالص پالایشگاه </v-card-subtitle>
+                  <v-card-text>
+                    <v-row dense>
                       <v-col cols="6">
                         <v-text-field
                           v-model.number="refineryNetWeightMin"
@@ -109,9 +105,9 @@
               </v-col>
               <v-col cols="3">
                 <v-card elevation="0">
-                  <v-card-subtitle class="mt-n9"> وزن تخلیه </v-card-subtitle>
-                  <v-card-text class="mt-n8">
-                    <v-row dense class="tw-pt-2.5">
+                  <v-card-subtitle> وزن تخلیه </v-card-subtitle>
+                  <v-card-text>
+                    <v-row dense>
                       <v-col cols="6">
                         <v-text-field
                           v-model.number="emptyWeightMin"
@@ -184,44 +180,55 @@
       <div
         class="tw-flex tw-flex-row-reverse my-n5 tw-px-4 tw-gap-x-4 tw-text-end"
       >
-        <v-btn
-          fab
-          bottom
-          small
-          color="primary"
-          dark
-          icon="mdi-magnify"
-          :loading="searchLoading"
-          @click="getReport(null, true)"
-        >
-        </v-btn>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              small
+              color="primary"
+              icon
+              :loading="searchLoading"
+              @click="getReport(null, true)"
+            >
+              <v-icon> mdi-magnify </v-icon>
+            </v-btn>
+          </template>
+          <span>جستجو</span>
+        </v-tooltip>
 
-        <v-btn
-          fab
-          bottom
-          small
-          color="green darken-3"
-          dark
-          icon="mdi-microsoft-excel"
-          :loading="loading === 'excel'"
-          @click="excelReport(null)"
-        >
-        </v-btn>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              small
+              color="green darken-3"
+              icon
+              :loading="loading === 'excel'"
+              @click="excelReport(null)"
+            >
+              <v-icon> mdi-microsoft-excel </v-icon>
+            </v-btn>
+          </template>
+          <span>خروجی اکسل</span>
+        </v-tooltip>
 
-        <v-btn
-          fab
-          bottom
-          small
-          color="warning darken-1"
-          dark
-          icon="mdi-file-document-refresh-outline"
-          :loading="loading === 'excel'"
-          @click="clearFilter"
-        >
-        </v-btn>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              small
+              color="warning darken-1"
+              icon
+              @click="clearFilter"
+            >
+              <v-icon> mdi-file-document-refresh-outline </v-icon>
+            </v-btn>
+          </template>
+          <span>خالی کردن</span>
+        </v-tooltip>
       </div>
       <v-card class="mt-10" elevation="5">
-        <v-card-title class="primary tw-text-white pa-3" color="primary">
+        <v-card-title class="tw-bg-indigo-600 pa-3 tw-text-white">
           نتیجه جستجو
         </v-card-title>
         <v-card-text>
@@ -240,7 +247,6 @@
             :loading="loading === 'get'"
             return-object
             @update:options="tablePageChange"
-            @update:currentItems="(e) => console.log('currentItems', e)"
           >
             <template #item.truck_number="{ item }">
               <div class="plaque tw-text-right">
@@ -293,53 +299,71 @@
         v-if="userRole !== 'statistics&InformationUser'"
         class="tw-flex tw-flex-row-reverse mt-n5 tw-px-4 tw-gap-x-4"
       >
-        <v-btn
-          :disabled="resourcesLoading"
-          fab
-          bottom
-          small
-          color="primary"
-          dark
-          icon="mdi-plus"
-          class="mb-5"
-          @click="newData"
-        >
-        </v-btn>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :disabled="resourcesLoading"
+              small
+              color="primary"
+              icon
+              class="mb-5"
+              @click="newData"
+            >
+              <v-icon> mdi-plus </v-icon>
+            </v-btn>
+          </template>
+          <span>جدید</span>
+        </v-tooltip>
 
-        <v-btn
-          fab
-          bottom
-          small
-          color="orange"
-          dark
-          icon="mdi-pencil"
-          class="mb-5"
-          @click="editData"
-        >
-        </v-btn>
+        <template v-if="vmData[0]">
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                small
+                color="orange"
+                icon
+                class="mb-5"
+                @click="editData"
+              >
+                <v-icon color="white"> mdi-pencil </v-icon>
+              </v-btn>
+            </template>
+            <span>ویرایش</span>
+          </v-tooltip>
 
-        <v-btn
-          fab
-          bottom
-          small
-          color="red"
-          dark
-          icon="mdi-delete"
-          class="mb-5"
-          @click="openDeleteDialog"
-        >
-        </v-btn>
-
-        <v-btn
-          fab
-          bottom
-          small
-          icon="mdi-delete-restore"
-          color="success"
-          class="mb-5 ml-auto"
-          @click="recoveryData"
-        >
-        </v-btn>
+          <v-tooltip location="bottom">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                small
+                color="red"
+                icon
+                class="mb-5"
+                @click="openDeleteDialog"
+              >
+                <v-icon> mdi-delete </v-icon>
+              </v-btn>
+            </template>
+            <span>حذف</span>
+          </v-tooltip>
+        </template>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              small
+              icon
+              color="success"
+              class="mb-5 ml-auto"
+              @click="recoveryData"
+            >
+              <v-icon> mdi-delete-restore </v-icon>
+            </v-btn>
+          </template>
+          <span>بازگردانی</span>
+        </v-tooltip>
       </div>
     </template>
     <billOfLadingInput
@@ -357,23 +381,23 @@
       }"
       @back="closeNewEdit"
     />
-    <!-- <recovery
+    <recovery
       v-if="openRecoveryDialog"
       url="api/weighbridgeInputRecoveryData"
       :headers="headers"
       @close="openRecoveryDialogHandler"
-    /> -->
+    />
   </div>
 </template>
 
 <script>
-// import moment from "moment-jalaali";
+import moment from "moment-jalaali";
 import ExcelJS from "exceljs";
 import saveAs from "file-saver";
 // import VueDatePicker from "@vuepic/vue-datepicker";
 import { rules } from "../../mixins/rules";
 // import Vue3PersianDatetimePicker from "~/components/picker/Vue3PersianDatetimePicker";
-// import globals from "~/globals/globals";
+import globals from "~/globals/globals";
 import billOfLadingInput from "~/components/billOfLading/input.vue";
 import { useNotificationStore } from "~/store/notification";
 // import "@vuepic/vue-datepicker/dist/main.css";
@@ -580,244 +604,244 @@ export default {
       // }
     },
     excelReport(link = null) {
-      console.log(link);
-      // if (this.$refs.form.validate()) {
-      //   this.loading = "excel";
-      // const { $axios } = useNuxtApp();
-      //   $axios.setHeader(
-      //     "Period",
-      //     this.$cookies.get("auth").user_meta.period,
-      //   );
-      //   $axios
-      //     .get(!link ? "/api/weighbridgeInputExportExcel" : link, {
-      //       params: {
-      //         startDate: this.startDate,
-      //         endDate: this.endDate,
-      //         product: this.product,
-      //         truckNumber: this.plaque,
-      //         exchangeContractNumber: this.exchangeContractNumber,
-      //         remittanceNumber: this.remittanceNumber,
-      //         origin: this.origin,
-      //         refineryNetWeightMin: this.refineryNetWeightMin
-      //           ? this.refineryNetWeightMin
-      //           : 0,
-      //         refineryNetWeightMax: this.refineryNetWeightMax
-      //           ? this.refineryNetWeightMax
-      //           : 0,
-      //         factoryEmptyWeightMin: this.emptyWeightMin
-      //           ? this.emptyWeightMin
-      //           : 0,
-      //         factoryEmptyWeightMax: this.emptyWeightMax
-      //           ? this.emptyWeightMax
-      //           : 0,
-      //         drainTankName: this.tankName,
-      //         billOfLadingUser: this.billOfLadingUser,
-      //         row: this.row,
-      //       },
-      //     })
-      //     .then((res) => {
-      //       this.excelData = [];
-      //       // res.data.data.forEach((item) => {
-      //       res.data.forEach((item) => {
-      //         // switch (item.shift) {
-      //         //   case 'morning':
-      //         //     item.shift = 'صبح'
-      //         //     break
-      //         //   case 'afternoon':
-      //         //     item.shift = 'عصر'
-      //         //     break
-      //         //   case 'night':
-      //         //     item.shift = 'شب'
-      //         //     break
-      //         // }
-      //         item.product = this.products.find(
-      //           (product) => product.id === item.product,
-      //         )?.title;
-      //         item.buyer = this.buyers.find(
-      //           (resource) => resource.id === item.buyer,
-      //         )?.title;
-      //         item.origin = this.origins.find(
-      //           (resource) => resource.id === item.origin,
-      //         )?.title;
-      //         item.transport_contractor = this.transportContractors.find(
-      //           (resource) => resource.id === item.transport_contractor,
-      //         )?.title;
-      //         item.drain_tank_name = this.drainTanks.find(
-      //           (resource) => resource.id === item.drain_tank_name,
-      //         )?.title;
-      //         item.origin_tank = this.originTanks.find(
-      //           (resource) => resource.id === item.origin_tank,
-      //         )?.title;
-      //         item.send_status = this.sendStatuses.find(
-      //           (resource) => resource.id === item.send_status,
-      //         )?.title;
+      if (this.$refs.form.validate()) {
+        this.loading = "excel";
+        const { $axios } = useNuxtApp();
+        const USER = useCookie("auth").value;
+        // $axios.setHeader("Period", USER.user_meta.period);
+        $axios
+          .get(!link ? "/api/weighbridgeInputExportExcel" : link, {
+            params: {
+              startDate: this.startDate,
+              endDate: this.endDate,
+              product: this.product,
+              truckNumber: this.plaque,
+              exchangeContractNumber: this.exchangeContractNumber,
+              remittanceNumber: this.remittanceNumber,
+              origin: this.origin,
+              refineryNetWeightMin: this.refineryNetWeightMin
+                ? this.refineryNetWeightMin
+                : 0,
+              refineryNetWeightMax: this.refineryNetWeightMax
+                ? this.refineryNetWeightMax
+                : 0,
+              factoryEmptyWeightMin: this.emptyWeightMin
+                ? this.emptyWeightMin
+                : 0,
+              factoryEmptyWeightMax: this.emptyWeightMax
+                ? this.emptyWeightMax
+                : 0,
+              drainTankName: this.tankName,
+              billOfLadingUser: this.billOfLadingUser,
+              row: this.row,
+            },
+            headers: {
+              Period: USER.user_meta.period,
+            },
+          })
+          .then((res) => {
+            this.excelData = [];
+            // res.data.data.forEach((item) => {
+            res.data.forEach((item) => {
+              // switch (item.shift) {
+              //   case 'morning':
+              //     item.shift = 'صبح'
+              //     break
+              //   case 'afternoon':
+              //     item.shift = 'عصر'
+              //     break
+              //   case 'night':
+              //     item.shift = 'شب'
+              //     break
+              // }
+              item.product = this.products.find(
+                (product) => product.id === item.product,
+              )?.title;
+              item.buyer = this.buyers.find(
+                (resource) => resource.id === item.buyer,
+              )?.title;
+              item.origin = this.origins.find(
+                (resource) => resource.id === item.origin,
+              )?.title;
+              item.transport_contractor = this.transportContractors.find(
+                (resource) => resource.id === item.transport_contractor,
+              )?.title;
+              item.drain_tank_name = this.drainTanks.find(
+                (resource) => resource.id === item.drain_tank_name,
+              )?.title;
+              item.origin_tank = this.originTanks.find(
+                (resource) => resource.id === item.origin_tank,
+              )?.title;
+              item.send_status = this.sendStatuses.find(
+                (resource) => resource.id === item.send_status,
+              )?.title;
 
-      //         item.truckPlaque =
-      //           item.truck_number.slice(0, 2) + item.truck_number.slice(3, 6);
-      //         item.truckPlaque2 = item.truck_number.slice(6, 8);
+              item.truckPlaque =
+                item.truck_number.slice(0, 2) + item.truck_number.slice(3, 6);
+              item.truckPlaque2 = item.truck_number.slice(6, 8);
 
-      //         item.deepDateYear = item.deep_date.slice(0, 4);
-      //         item.deepDateMonth = item.deep_date.slice(5, 7);
-      //         item.deepDateDay = item.deep_date.slice(8, 10);
+              item.deepDateYear = item.deep_date.slice(0, 4);
+              item.deepDateMonth = item.deep_date.slice(5, 7);
+              item.deepDateDay = item.deep_date.slice(8, 10);
 
-      //         item.refineryEnteringDateYear =
-      //           item.refinery_entering_date?.slice(0, 4);
-      //         item.refineryEnteringDateMonth =
-      //           item.refinery_entering_date?.slice(5, 7);
-      //         item.refineryEnteringDateDay = item.refinery_entering_date?.slice(
-      //           8,
-      //           10,
-      //         );
+              item.refineryEnteringDateYear =
+                item.refinery_entering_date?.slice(0, 4);
+              item.refineryEnteringDateMonth =
+                item.refinery_entering_date?.slice(5, 7);
+              item.refineryEnteringDateDay = item.refinery_entering_date?.slice(
+                8,
+                10,
+              );
 
-      //         item.refineryLeavingDateYear = item.refinery_leaving_date?.slice(
-      //           0,
-      //           4,
-      //         );
-      //         item.refineryLeavingDateMonth = item.refinery_leaving_date?.slice(
-      //           5,
-      //           7,
-      //         );
-      //         item.refineryLeavingDateDay = item.refinery_leaving_date?.slice(
-      //           8,
-      //           10,
-      //         );
+              item.refineryLeavingDateYear = item.refinery_leaving_date?.slice(
+                0,
+                4,
+              );
+              item.refineryLeavingDateMonth = item.refinery_leaving_date?.slice(
+                5,
+                7,
+              );
+              item.refineryLeavingDateDay = item.refinery_leaving_date?.slice(
+                8,
+                10,
+              );
 
-      //         item.securityAppointmentDateYear =
-      //           item.security_appointment_date?.slice(0, 4);
-      //         item.securityAppointmentDateMonth =
-      //           item.security_appointment_date?.slice(5, 7);
-      //         item.securityAppointmentDateDay =
-      //           item.security_appointment_date?.slice(8, 10);
+              item.securityAppointmentDateYear =
+                item.security_appointment_date?.slice(0, 4);
+              item.securityAppointmentDateMonth =
+                item.security_appointment_date?.slice(5, 7);
+              item.securityAppointmentDateDay =
+                item.security_appointment_date?.slice(8, 10);
 
-      //         item.weighbridgeEnteringDateYear =
-      //           item.weighbridge_entering_date?.slice(0, 4);
-      //         item.weighbridgeEnteringDateMonth =
-      //           item.weighbridge_entering_date?.slice(5, 7);
-      //         item.weighbridgeEnteringDateDay =
-      //           item.weighbridge_entering_date?.slice(8, 10);
+              item.weighbridgeEnteringDateYear =
+                item.weighbridge_entering_date?.slice(0, 4);
+              item.weighbridgeEnteringDateMonth =
+                item.weighbridge_entering_date?.slice(5, 7);
+              item.weighbridgeEnteringDateDay =
+                item.weighbridge_entering_date?.slice(8, 10);
 
-      //         item.weighbridgeLeavingDateYear =
-      //           item.weighbridge_leaving_date?.slice(0, 4);
-      //         item.weighbridgeLeavingDateMonth =
-      //           item.weighbridge_leaving_date?.slice(5, 7);
-      //         item.weighbridgeLeavingDateDay =
-      //           item.weighbridge_leaving_date?.slice(8, 10);
+              item.weighbridgeLeavingDateYear =
+                item.weighbridge_leaving_date?.slice(0, 4);
+              item.weighbridgeLeavingDateMonth =
+                item.weighbridge_leaving_date?.slice(5, 7);
+              item.weighbridgeLeavingDateDay =
+                item.weighbridge_leaving_date?.slice(8, 10);
 
-      //         item.fullWeightDifference =
-      //           item.factory_full_weight - item.refinery_full_weight;
-      //         item.factoryWeightVSOriginWeightDifference =
-      //           item.factory_net_weight - item.refinery_net_weight;
-      //         moment.loadPersian({ usePersianDigits: false });
-      //         // خواب مبدأ + خواب مقصد
-      //         const SUM_AS_MILLISECONDS = moment
-      //           .duration(item.origin_sleep)
-      //           .add(item.total_sleep)
-      //           .as("milliseconds");
-      //         const HOURS = Math.floor(
-      //           moment.duration(SUM_AS_MILLISECONDS).as("hours"),
-      //         );
-      //         const MINUTES =
-      //           moment.duration(SUM_AS_MILLISECONDS).as("minutes") % 60;
-      //         item.originPlusDestinationSleep =
-      //           (HOURS < 10 ? "0" + HOURS : HOURS) +
-      //           ":" +
-      //           (MINUTES < 10 ? "0" + MINUTES : MINUTES);
-      //         // خواب ورود به باسکول تا خروج از باسکول
-      //         const ENTERING =
-      //           item.weighbridge_entering_date +
-      //           "T" +
-      //           item.weighbridge_entering_time +
-      //           ":00";
-      //         const LEAVING =
-      //           item.weighbridge_leaving_date +
-      //           "T" +
-      //           item.weighbridge_leaving_time +
-      //           ":00";
-      //         item.weighbridgeSleep = globals.timeDifference(LEAVING, ENTERING);
-      //         // خواب اعلام به آزمایشگاه تا زمان نمونه گیری
-      //         const START =
-      //           "01/01/01T" + item.laboratory_announcement_time + ":00";
-      //         const END = "01/01/01T" + item.sampling_time + ":00";
-      //         item.laboratoryAnnouncementUntilSamplingSleep =
-      //           globals.timeDifference(END, START);
+              item.fullWeightDifference =
+                item.factory_full_weight - item.refinery_full_weight;
+              item.factoryWeightVSOriginWeightDifference =
+                item.factory_net_weight - item.refinery_net_weight;
+              moment.loadPersian({ usePersianDigits: false });
+              // خواب مبدأ + خواب مقصد
+              const SUM_AS_MILLISECONDS = moment
+                .duration(item.origin_sleep)
+                .add(item.total_sleep)
+                .as("milliseconds");
+              const HOURS = Math.floor(
+                moment.duration(SUM_AS_MILLISECONDS).as("hours"),
+              );
+              const MINUTES =
+                moment.duration(SUM_AS_MILLISECONDS).as("minutes") % 60;
+              item.originPlusDestinationSleep =
+                (HOURS < 10 ? "0" + HOURS : HOURS) +
+                ":" +
+                (MINUTES < 10 ? "0" + MINUTES : MINUTES);
+              // خواب ورود به باسکول تا خروج از باسکول
+              const ENTERING =
+                item.weighbridge_entering_date +
+                "T" +
+                item.weighbridge_entering_time +
+                ":00";
+              const LEAVING =
+                item.weighbridge_leaving_date +
+                "T" +
+                item.weighbridge_leaving_time +
+                ":00";
+              item.weighbridgeSleep = globals.timeDifference(LEAVING, ENTERING);
+              // خواب اعلام به آزمایشگاه تا زمان نمونه گیری
+              const START =
+                "01/01/01T" + item.laboratory_announcement_time + ":00";
+              const END = "01/01/01T" + item.sampling_time + ":00";
+              item.laboratoryAnnouncementUntilSamplingSleep =
+                globals.timeDifference(END, START);
 
-      //         if (item.pier_data) {
-      //           item.destinationFullWeight = item.pier_data.pier_full_weight;
-      //           item.destinationEmptyWeight = item.pier_data.pier_empty_weight;
-      //           item.destinationNetWeight = item.pier_data.pier_net_weight;
-      //           item.destinationExitDateYear =
-      //             item.pier_data.pier_exit_date.slice(0, 4);
-      //           item.destinationExitDateMonth =
-      //             item.pier_data.pier_exit_date.slice(5, 7);
-      //           item.destinationExitDateDay =
-      //             item.pier_data.pier_exit_date.slice(8, 10);
-      //           item.destinationExitDate = item.pier_data.pier_exit_date;
-      //           item.destinationExitTime = item.pier_data.pier_exit_time;
-      //           item.onTheWaySleep = item.pier_data.routes_duration;
-      //           item.destinationSleep = item.pier_data.pier_sleep;
-      //           item.totalSleep = item.pier_data.total_sleep;
-      //           item.refineryWeightAndDestinationWeightDifference =
-      //             item.pier_data.pier_net_weight - item.refinery_net_weight;
-      //           item.tanker = this.drainTanks.find(
-      //             (resource) => resource.id === item.pier_data.drain_tank,
-      //           )?.title;
-      //           item.pierProduct = this.products.find(
-      //             (resource) => resource.id === item.pier_data.product,
-      //           )?.title;
-      //           item.pierNetWeight = item.pier_data.pier_net_weight;
-      //           if (item.discharge_status === "E") {
-      //             const ENTERING =
-      //               item.security_appointment_date +
-      //               "T" +
-      //               item.security_appointment_time +
-      //               ":00";
-      //             const LEAVING =
-      //               item.destinationExitDate +
-      //               "T" +
-      //               item.destinationExitTime +
-      //               ":00";
-      //             item.EStatusSleep = globals.timeDifference(LEAVING, ENTERING);
+              if (item.pier_data) {
+                item.destinationFullWeight = item.pier_data.pier_full_weight;
+                item.destinationEmptyWeight = item.pier_data.pier_empty_weight;
+                item.destinationNetWeight = item.pier_data.pier_net_weight;
+                item.destinationExitDateYear =
+                  item.pier_data.pier_exit_date.slice(0, 4);
+                item.destinationExitDateMonth =
+                  item.pier_data.pier_exit_date.slice(5, 7);
+                item.destinationExitDateDay =
+                  item.pier_data.pier_exit_date.slice(8, 10);
+                item.destinationExitDate = item.pier_data.pier_exit_date;
+                item.destinationExitTime = item.pier_data.pier_exit_time;
+                item.onTheWaySleep = item.pier_data.routes_duration;
+                item.destinationSleep = item.pier_data.pier_sleep;
+                item.totalSleep = item.pier_data.total_sleep;
+                item.refineryWeightAndDestinationWeightDifference =
+                  item.pier_data.pier_net_weight - item.refinery_net_weight;
+                item.tanker = this.drainTanks.find(
+                  (resource) => resource.id === item.pier_data.drain_tank,
+                )?.title;
+                item.pierProduct = this.products.find(
+                  (resource) => resource.id === item.pier_data.product,
+                )?.title;
+                item.pierNetWeight = item.pier_data.pier_net_weight;
+                if (item.discharge_status === "E") {
+                  const ENTERING =
+                    item.security_appointment_date +
+                    "T" +
+                    item.security_appointment_time +
+                    ":00";
+                  const LEAVING =
+                    item.destinationExitDate +
+                    "T" +
+                    item.destinationExitTime +
+                    ":00";
+                  item.EStatusSleep = globals.timeDifference(LEAVING, ENTERING);
 
-      //             const SUM_AS_MILLISECONDS = moment
-      //               .duration(item.origin_sleep)
-      //               .add(item.EStatusSleep)
-      //               .as("milliseconds");
-      //             const HOURS = Math.floor(
-      //               moment.duration(SUM_AS_MILLISECONDS).as("hours"),
-      //             );
-      //             const MINUTES =
-      //               moment.duration(SUM_AS_MILLISECONDS).as("minutes") % 60;
-      //             item.EOriginPlusDestinationSleep =
-      //               (HOURS < 10 ? "0" + HOURS : HOURS) +
-      //               ":" +
-      //               (MINUTES < 10 ? "0" + MINUTES : MINUTES);
-      //           }
-      //         }
-      //         if (item.bulk_output_data) {
-      //           item.bulkoutputWeighbridgeLeavingDate =
-      //             item.bulk_output_data.weighbridge_leaving_date;
-      //         }
-      //         item.productPlusRefinery = item.product + " - " + item.origin;
-      //         // item.fleet = ''
-      //         this.excelData.push(item);
-      //       });
-      //       // if (!this.lastPageIndex) {
-      //       //   this.lastPageIndex = res.data.last_page
-      //       // }
-      //       // else {
-      //       //   this.exportExcel(this.excelData)
-      //       // }
-      //     })
-      //     .finally(async () => {
-      //       // if (this.currentIndex < this.lastPageIndex) {
-      //       // this.currentIndex++
-      //       await this.exportExcel(this.excelData);
-      //       // this.excelReport('/api/weighbridgeInputExportExcel?page=' + this.currentIndex)
-      //       // }
-      //       // if (this.currentIndex === this.lastPageIndex) {
-      //       // }
-      //     });
-      // }
+                  const SUM_AS_MILLISECONDS = moment
+                    .duration(item.origin_sleep)
+                    .add(item.EStatusSleep)
+                    .as("milliseconds");
+                  const HOURS = Math.floor(
+                    moment.duration(SUM_AS_MILLISECONDS).as("hours"),
+                  );
+                  const MINUTES =
+                    moment.duration(SUM_AS_MILLISECONDS).as("minutes") % 60;
+                  item.EOriginPlusDestinationSleep =
+                    (HOURS < 10 ? "0" + HOURS : HOURS) +
+                    ":" +
+                    (MINUTES < 10 ? "0" + MINUTES : MINUTES);
+                }
+              }
+              if (item.bulk_output_data) {
+                item.bulkoutputWeighbridgeLeavingDate =
+                  item.bulk_output_data.weighbridge_leaving_date;
+              }
+              item.productPlusRefinery = item.product + " - " + item.origin;
+              // item.fleet = ''
+              this.excelData.push(item);
+            });
+            // if (!this.lastPageIndex) {
+            //   this.lastPageIndex = res.data.last_page
+            // }
+            // else {
+            //   this.exportExcel(this.excelData)
+            // }
+          })
+          .finally(async () => {
+            // if (this.currentIndex < this.lastPageIndex) {
+            // this.currentIndex++
+            await this.exportExcel(this.excelData);
+            // this.excelReport('/api/weighbridgeInputExportExcel?page=' + this.currentIndex)
+            // }
+            // if (this.currentIndex === this.lastPageIndex) {
+            // }
+          });
+      }
     },
     exportExcel(data) {
       const workbook = new ExcelJS.Workbook();
@@ -1154,7 +1178,6 @@ export default {
       this.newEdit = true;
     },
     editData() {
-      console.log("edit", this.vmData);
       this.editId = this.vmData[0].row;
       this.newEdit = true;
     },
@@ -1172,10 +1195,9 @@ export default {
     deleteData() {
       this.loading = "delete";
       const { $axios } = useNuxtApp();
-      console.log("this.vmData", this.vmData);
       $axios
-        // .delete("/api/weighbridgeInput/" + this.vmData[0].id)
-        .delete("/api/weighbridgeInput/" + this.vmData[0])
+        .delete("/api/weighbridgeInput/" + this.vmData[0].id)
+        // .delete("/api/weighbridgeInput/" + this.vmData[0])
         .then(() => {
           const INDEX = this.mainData.findIndex(
             (item) => item.id === this.vmData[0].id,
