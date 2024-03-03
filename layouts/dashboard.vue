@@ -32,50 +32,46 @@
                 :close-on-content-click="false"
                 offset-y
               >
-                <template #activator="{ attrs }">
-                  <v-btn icon v-bind="attrs">
+                <template #activator="{ props }">
+                  <v-btn icon v-bind="props">
                     <v-icon>mdi-dots-vertical</v-icon>
                   </v-btn>
                 </template>
 
                 <v-list width="250">
-                  <v-list-group class="px-2">
-                    <v-list-item link @click="toggleTheme">
-                      <v-row dense no-gutters>
-                        <v-col cols="3">
-                          <v-icon v-if="$vuetify.theme.dark">
-                            mdi-moon-waning-crescent
-                          </v-icon>
-                          <v-icon v-else> mdi-white-balance-sunny </v-icon>
-                        </v-col>
-                        <v-col cols="7">
-                          {{
-                            $vuetify.theme.dark ? "زمینه روشن" : "زمینه تیره"
-                          }}
-                        </v-col>
-                      </v-row>
-                    </v-list-item>
-                    <v-divider v-if="showPeriod" class="my-1" />
-                    <v-list-item v-if="showPeriod" @click="openPeriodDialog">
-                      <v-row no-gutters dense>
-                        <v-col cols="3">
-                          <v-icon>mdi-calendar-range</v-icon>
-                        </v-col>
-                        <v-col cols="7"> بازه زمانی </v-col>
-                      </v-row>
-                    </v-list-item>
-                  </v-list-group>
+                  <v-list-item link @click="toggleTheme">
+                    <v-row dense no-gutters>
+                      <v-col cols="3">
+                        <v-icon v-if="$vuetify.theme.dark">
+                          mdi-moon-waning-crescent
+                        </v-icon>
+                        <v-icon v-else> mdi-white-balance-sunny </v-icon>
+                      </v-col>
+                      <v-col cols="7">
+                        {{ $vuetify.theme.dark ? "زمینه روشن" : "زمینه تیره" }}
+                      </v-col>
+                    </v-row>
+                  </v-list-item>
+                  <v-divider v-if="showPeriod" class="my-1" />
+                  <v-list-item v-if="showPeriod" @click="openPeriodDialog">
+                    <v-row no-gutters dense>
+                      <v-col cols="3">
+                        <v-icon>mdi-calendar-range</v-icon>
+                      </v-col>
+                      <v-col cols="7"> بازه زمانی </v-col>
+                    </v-row>
+                  </v-list-item>
                 </v-list>
               </v-menu>
 
-              <v-btn icon absolute class="tw-bottom-0" @click="logout">
+              <v-btn icon absolute class="tw-top-14" @click="logout">
                 <v-icon>mdi-logout-variant</v-icon>
               </v-btn>
             </div>
           </div>
           <div class="d-flex tw-flex-col tw-mx-auto">
             <v-avatar
-              class="tw-border mb-2 tw-shadow tw-cursor-pointer"
+              class="tw-border mb-2 tw-shadow tw-cursor-pointer tw-mx-auto"
               color="darken-1"
               size="100"
               @click="editProfile"
@@ -100,7 +96,7 @@
           <v-list-item
             prepend-icon="mdi-view-dashboard-outline"
             title="داشبورد"
-            href="/"
+            to="/"
           ></v-list-item>
 
           <v-list-group
@@ -113,6 +109,7 @@
                 v-bind="props"
                 :prepend-icon="item.icon"
                 :title="item.text"
+                color="primary"
               ></v-list-item>
             </template>
 
@@ -122,14 +119,16 @@
               :title="subitem.text"
               :prepend-icon="subitem.icon"
               :value="subitem.text"
-              :href="subitem.page"
+              :to="subitem.page"
+              color="primary"
             ></v-list-item>
           </v-list-group>
 
           <v-list-item
             prepend-icon="mdi-account-multiple-outline"
             title="کاربران"
-            href="/users"
+            to="/users"
+            color="primary"
           ></v-list-item>
         </v-list>
       </v-navigation-drawer>
@@ -604,12 +603,14 @@ export default {
       return filterItems(this.items);
     },
     showPeriod() {
-      const USER = this.$cookies.get("auth");
-      return this.userRoles.includes(USER.user.role);
+      // const USER = this.$cookies.get("auth");
+      return this.userRoles.includes(useCookie("auth").value.user.role);
+      // return this.userRoles.includes(USER.user.role);
     },
     userPermission() {
       return ["weighbridgeAdmin", "admin"].includes(
-        this.$cookies.get("auth").user.role,
+        // this.$cookies.get("auth").user.role,
+        useCookie("auth").value.user.role,
       );
     },
     // ...mapState({
@@ -621,12 +622,14 @@ export default {
     "route.path": {
       deep: true,
       handler() {
-        this.$store.commit("notification/removeAllNotifications");
+        const store = useNotificationStore();
+        store.removeAllNotifications();
+        // this.$store.commit("notification/removeAllNotifications");
       },
     },
   },
   created() {
-    console.log("$vuetify", this.$vuetify);
+    // console.log("$vuetify", this.$vuetify);
     // const USER_ROLE = this.$cookies.get("auth").user.role;
     const auth = useCookie("auth");
     const USER_ROLE = auth.value.user.role;
@@ -634,7 +637,7 @@ export default {
     this.baseUrl = globals.baseUrl();
 
     this.user = auth.value.user;
-    console.log("user:", this.user);
+    // console.log("user:", this.user);
 
     this.getPeriods();
 
@@ -663,31 +666,43 @@ export default {
   },
   methods: {
     logout() {
-      this.$axios
+      const { $axios, $router } = useNuxtApp();
+      $axios
         .delete("api/logout", {
           params: {
-            id: this.$cookies.get("auth").user.id,
+            // id: this.$cookies.get("auth").user.id,
+            id: useCookie("auth").value.user.id,
           },
         })
         .finally(() => {
-          this.$cookies.remove("auth");
-          this.$router.push("/login");
+          // this.$cookies.remove("auth");
+          // this.$router.push("/login");
+          useCookie("auth").value = "";
+          $router.push("/login");
         });
     },
     toggleTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      const CURRENT_DATA = this.$cookies.get("auth");
+      // const CURRENT_DATA = this.$cookies.get("auth");
+      const CURRENT_DATA = useCookie("auth").value;
       CURRENT_DATA.user_meta.darkMode = this.$vuetify.theme.dark;
-      this.$cookies.set("auth", CURRENT_DATA, {
+      const cookie = useCookie("auth", {
         path: "/",
         maxAge: 28800,
       });
+      cookie.value = CURRENT_DATA;
+      // this.$cookies.set("auth", CURRENT_DATA, {
+      //   path: "/",
+      //   maxAge: 28800,
+      // });
       const DATA = {
         userId: this.user.id,
         metaKey: "darkMode",
         metaValue: this.$vuetify.theme.dark ? "true" : "false",
       };
-      this.$axios.post("api/userMeta", DATA);
+      const { $axios } = useNuxtApp();
+      // this.$axios.post("api/userMeta", DATA);
+      $axios.post("api/userMeta", DATA);
     },
     editProfile() {
       this.editProfileDialog = true;
@@ -719,11 +734,13 @@ export default {
         const PROFILE_PICTURE_FORM = new FormData();
         PROFILE_PICTURE_FORM.append(
           "userId",
-          this.$cookies.get("auth").user.id,
+          // this.$cookies.get("auth").user.id,
+          useCookie("auth").value.user.id,
         );
         PROFILE_PICTURE_FORM.append("picture", this.$refs.input.files[0]);
+        const { $axios } = useNuxtApp();
         REQUESTS.push(
-          this.$axios
+          $axios
             .post("/api/setProfilePicture", PROFILE_PICTURE_FORM, {
               "Content-Type": "multipart/form-data",
             })
@@ -734,8 +751,9 @@ export default {
       }
       if (this.showPassword) {
         if (this.$refs.profileForm.validate()) {
+          const { $axios } = useNuxtApp();
           REQUESTS.push(
-            this.$axios
+            $axios
               .put("/api/changePassword", {
                 username: this.user.username,
                 currentPassword: this.currentPassword,
@@ -812,15 +830,16 @@ export default {
     },
     openPeriodDialog() {
       this.periodDialog = true;
-      if (this.$cookies.get("auth").user_meta.period) {
+      if (useCookie("auth").value.user_meta.period) {
         this.currentPeriod = this.periods.find(
-          (p) => p.id === parseInt(this.$cookies.get("auth").user_meta.period),
+          (p) => p.id === parseInt(useCookie("auth").value.user_meta.period),
         )?.id;
       } else {
         this.currentPeriod = this.periods[0].id;
       }
     },
     savePeriod() {
+      const { $axios } = useNuxtApp();
       if (this.periodDialogActiveTab === 0) {
         if (this.$refs.currentPeriod.validate()) {
           this.loading = "savePeriod";
@@ -829,15 +848,20 @@ export default {
             metaKey: "period",
             metaValue: this.currentPeriod,
           };
-          this.$axios
+          $axios
             .post("api/userMeta", DATA)
             .then(() => {
-              const CURRENT_DATA = this.$cookies.get("auth");
+              const CURRENT_DATA = useCookie("auth").value;
               CURRENT_DATA.user_meta.period = this.currentPeriod;
-              this.$cookies.set("auth", CURRENT_DATA, {
+              // this.$cookies.set("auth", CURRENT_DATA, {
+              //   path: "/",
+              //   maxAge: 28800,
+              // });
+              const cookie = useCookie("auth", {
                 path: "/",
                 maxAge: 28800,
               });
+              cookie.value = CURRENT_DATA;
               this.periodDialog = false;
             })
             .finally(() => {
@@ -856,7 +880,8 @@ export default {
           DATA.endDate = moment(this.period.endDate, "jYYYY/jMM/jDD").format(
             "YYYY-MM-DD",
           );
-          this.$axios
+          const { $axios } = useNuxtApp();
+          $axios
             .post("/api/period", DATA)
             .then((res) => {
               this.periods.push(res.data);

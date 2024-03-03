@@ -154,7 +154,7 @@
                   v-model="billOfLadingUser"
                   label="ثبت کننده"
                   :items="billOfLadingUsers"
-                  item-text="name"
+                  item-text="title"
                   item-value="id"
                   clearable
                   @keyup.enter="getReport"
@@ -529,12 +529,24 @@ export default {
         .then((res) => {
           this.products = res.data.products;
           this.origins = res.data.refineries;
-          this.transportContractors = res.data.transport_contractors;
+          this.transportContractors = res.data.transport_contractors.map(
+            (t) => {
+              return {
+                ...t,
+                title: t.company,
+              };
+            },
+          );
           this.drainTanks = res.data.drain_tanks;
           this.originTanks = res.data.origin_tanks;
           this.destinations = res.data.destinations;
           this.buyers = res.data.buyers;
-          this.billOfLadingUsers = res.data.bill_of_lading_users;
+          this.billOfLadingUsers = res.data.bill_of_lading_users.map((b) => {
+            return {
+              ...b,
+              title: b.name,
+            };
+          });
         })
         .finally(() => {
           this.resourcesLoading = false;

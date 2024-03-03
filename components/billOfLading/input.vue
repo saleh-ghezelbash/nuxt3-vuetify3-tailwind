@@ -24,7 +24,7 @@
       </v-col>
     </v-row>
     <v-card class="tw-m-1">
-      <v-card-title class="primary tw-text-white pa-3">
+      <v-card-title class="tw-bg-indigo-600 tw-text-white pa-3">
         اطلاعات پالایشگاه مبدأ
       </v-card-title>
       <v-card-text>
@@ -167,9 +167,9 @@
               :items="drivers"
               :loading="driversLoading"
               tabindex="11"
-              :append-outer-icon="driverOuterIcon()"
+              :append-inner-icon="driverOuterIcon()"
               :rules="[hasValue(inputData.driver, 'راننده')]"
-              @click:append-outer="
+              @click:append-inner="
                 inputData.driver ? changeDriverName() : addDriver()
               "
             />
@@ -180,7 +180,7 @@
               label="پیمانکار حمل *"
               outlined
               :items="resources.transportContractors"
-              item-text="company"
+              item-text="title"
               item-value="id"
               tabindex="12"
               :rules="[hasValue(inputData.transportContractor, 'پیمانکار حمل')]"
@@ -371,7 +371,7 @@
       </v-card-text>
     </v-card>
     <v-card class="my-4">
-      <v-card-title class="primary tw-text-white pa-3">
+      <v-card-title class="tw-bg-indigo-600 tw-text-white pa-3">
         اطلاعات بارنامه پلیس راهی
       </v-card-title>
       <v-card-text>
@@ -400,7 +400,7 @@
       </v-card-text>
     </v-card>
     <v-card>
-      <v-card-title class="primary tw-text-white pa-3">
+      <v-card-title class="tw-bg-indigo-600 tw-text-white pa-3">
         اطلاعات واحد حراست
       </v-card-title>
       <v-card-text>
@@ -488,7 +488,7 @@
       </v-card-text>
     </v-card>
     <v-card class="mt-4">
-      <v-card-title class="primary tw-text-white pa-3">
+      <v-card-title class="tw-bg-indigo-600 tw-text-white pa-3">
         اطلاعات قبض باسکول پالایش نفت آفتاب
       </v-card-title>
       <v-card-text>
@@ -671,6 +671,8 @@
                   label="وضعیت *"
                   outlined
                   :items="dischargeStatusList"
+                  item-text="title"
+                  item-value="id"
                   tabindex="45"
                   :rules="[hasValue(inputData.dischargeStatus[i], 'وضعیت')]"
                   @change="removeValue(i)"
@@ -779,55 +781,61 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <template v-if="loading !== 'get'">
-      <v-btn
-        v-bind="attrs"
-        fixed
-        fab
-        bottom
-        left
-        color="primary"
-        dark
-        class="ml-5 mb-5"
-        :loading="loading === 'submit'"
-        v-on="on"
-        @click="save"
-      >
-        <v-icon>mdi-content-save-outline</v-icon>
-      </v-btn>
-      <v-btn
-        v-bind="attrs"
-        fixed
-        fab
-        bottom
-        left
-        color="secondary"
-        dark
-        small
-        class="tw-ml-24 mb-6"
-        v-on="on"
-        @click="restoreData"
-      >
-        <v-icon>mdi-restore</v-icon>
-      </v-btn>
-    </template>
-    <!-- <changeDriverName
+    <div
+      class="tw-flex tw-flex-row-reverse my-n5 tw-px-4 tw-gap-x-4 tw-text-end"
+    >
+      <template v-if="loading !== 'get'">
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :loading="loading === 'submit'"
+              small
+              color="primary"
+              class="ml-5 mb-5"
+              icon
+              @click="save"
+            >
+              <v-icon>mdi-content-save-outline</v-icon>
+            </v-btn>
+          </template>
+          <span>ذخیره</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :loading="loading === 'submit'"
+              small
+              color="secondary"
+              class="mb-5"
+              icon
+              @click="restoreData"
+            >
+              <v-icon>mdi-restore</v-icon>
+            </v-btn>
+          </template>
+          <span>بازگردانی</span>
+        </v-tooltip>
+      </template>
+    </div>
+    <changeDriverName
       v-if="changeDriverNameDialog"
       :name="inputData.driver"
       @close="closeChangeDriverNameDialog($event)"
-    /> -->
+    />
   </v-form>
 </template>
 
 <script>
 import moment from "moment-jalaali";
 import { rules } from "../../mixins/rules";
-// import changeDriverName from "./changeDriverName.vue";
+import changeDriverName from "../changeDriverName.vue";
 import globals from "~/globals/globals";
 
 export default {
   name: "InputComponent",
-  //   components: { changeDriverName },
+  components: { changeDriverName },
   mixins: [rules],
   layout: "dashboard",
   props: {
@@ -898,8 +906,8 @@ export default {
       firstRefineryNetWeightValue: 0,
       drivers: [],
       dischargeStatusList: [
-        { text: "T", value: "T" },
-        { text: "E", value: "E" },
+        { id: "T", title: "T" },
+        { id: "E", title: "E" },
       ],
       // sendStatuses: [
       //   {
@@ -1512,6 +1520,7 @@ export default {
         });
     },
     driverOuterIcon() {
+      // return "mdi-content-save-outline";
       if (this.inputData.driver) {
         return "mdi-pen";
       } else if (this.$refs.driver && this.$refs.driver.lazySearch) {
